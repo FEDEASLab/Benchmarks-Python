@@ -1,11 +1,11 @@
 
-set A 216
+set A   216
 set Iz 2592
 set Iy 5832
-set J 6085.12013626099
-set E 3600
-set G 1500
-set L 96.0
+set J  6085.12013626099
+set E  3600
+set G  1500
+set L  96.0
 
 model Basic -ndm 3 -ndf 6
 
