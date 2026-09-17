@@ -213,10 +213,6 @@ if __name__ == "__main__":
             print(f"Failed at time = {model.getTime()}")
             break
 
-        # motion.draw_sections(rotation=model.nodeRotation,
-        #                      position=model.nodeDisp)
-        # motion.advance(time=model.getTime()*10)
-
         u.append(model.nodeDisp(find_node(model, x=length/2), 3))
         P.append(model.getTime())
 
