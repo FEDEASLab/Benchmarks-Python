@@ -57,14 +57,14 @@ def _run_axial(element, load_type="center"):
 
     if load_type == "offset":
         load = FrameLoad(model,
-                        shape='Heaviside', 
+                        shape='Uniform', 
                         basis='local',
                         elements=[1],
                         couple=[0,0,-m],
                         offset=[0,h/2,0])
     elif load_type == "center":
         load = FrameLoad(model,
-                        shape='Heaviside', 
+                        shape='Uniform', 
                         basis='local',
                         elements=[1],
                         force=[w, 0, 0],
