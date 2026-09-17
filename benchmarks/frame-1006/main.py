@@ -105,13 +105,13 @@ if __name__ == "__main__":
     M0 = 20*np.pi # 2 pi EI /L
 
     analyze(create_cantilever(
-                      shape,
-                      material,
-                      length,
-                      ne=10,
-                      shear=1,
-                      element = "ExactFrame",
-                      transform="Linear"),
+                    shape,
+                    material,
+                    length,
+                    ne=10,
+                    shear=1,
+                    element = "ExactFrame",
+                    transform="Linear"),
               Mmax=M0/8, Fmax=1/16, nsteps=1)
 
 
