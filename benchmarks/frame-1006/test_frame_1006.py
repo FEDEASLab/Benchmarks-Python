@@ -10,4 +10,3 @@ from xara.examples.perez2024nonlinear import Ex_4_3_1
 
 def test_Ex_4_3_1():
     Ex_4_3_1()
-
