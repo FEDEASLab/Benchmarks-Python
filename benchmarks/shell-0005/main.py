@@ -28,7 +28,7 @@ from xara.helpers import find_node
 from xara.load import Line, SurfaceLoad
 
 
-# --- Geometry (mm) -----------------------------------------------------------
+# Geometry (mm)
 PLATE_WIDTH_MM = 500.0
 PLATE_HEIGHT_MM = 300.0
 
