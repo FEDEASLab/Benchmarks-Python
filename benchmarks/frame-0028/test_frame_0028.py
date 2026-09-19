@@ -24,7 +24,7 @@ F = 1
 offset = b/2
 T = F*offset
 Elements = [
-    "ExactFrame", #"ForceFrame"
+    "ExactFrame", "ForceFrame"
 ]
 
 def _run_axial(element, load_type="center"):
@@ -207,7 +207,7 @@ def _run_twist_column(element, load_type="center", basis="local"):
                 elements=[1],
                 force=[0, 0, 0],
                 couple=[0, 0, T],   # global z = member axis
-                offset=[0, 0, 1],
+                offset=[1, 0, 0],
             )
     else:
         raise ValueError(f"Unknown load_type {load_type!r}")
