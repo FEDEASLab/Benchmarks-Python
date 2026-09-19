@@ -21,7 +21,7 @@ foreach element {forceBeamColumn ForceFrame PrismFrame} {
 #   -Iy 93.72731163999973 \
 #   -J  12.819369381331398
 
-  geomTransf Corotational 1 0 0 1 
+  geomTransf Corotational01 1 0 0 1 
 
 
   node 0   0.0   0 0
