@@ -45,5 +45,6 @@ system BandGen
 algorithm Newton
 analysis  Static 
 analyze 10
-puts "[nodeDisp 6 1]"
+
+# puts "[nodeDisp 6 1]"
 
