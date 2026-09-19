@@ -18,7 +18,7 @@ def create_model(element, section, shape, material):
 
     model.material(material)
 
-    model.section(xara.Section(section, shape))
+    model.section(xara.FrameSection(section, shape))
 
     model.geomTransf("Linear", 1, (0,0,1))
     model.element(element, 1, (1,2), section=1, transform=1, shear=0)
@@ -35,9 +35,9 @@ def test_frame_0011():
         E = 29e3*units.ksi,
         nu = 0.3
     )
-    shape = xs.from_aisc(shape, units=units, mesh_scale=1/20, material=material)
+    shape = xs.from_aisc(shape, units=units, mesh_scale=1/10, material=material)
 
-    G = material["E"]/(2*(1+material["nu"]))
+    G = material["E"]/(2.0*(1+material["nu"]))
     from xsection.analysis import SaintVenantSectionAnalysis
     GJ = SaintVenantSectionAnalysis(shape).twist_rigidity()
     print(GJ/G)
