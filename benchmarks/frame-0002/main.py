@@ -6,7 +6,7 @@ import os
 import xara
 from xara.benchmarks import Prism
 import xara.units.iks as units
-from xsection.library import from_aisc, Rectangle
+from xsection.library import from_aisc
 import numpy as np
 
 
@@ -31,8 +31,8 @@ if __name__ == "__main__":
     material = xara.Material(E=E, G=11.2e3*units.ksi)
     shape = from_aisc("W14x48", units=units, mesh_scale=1/100, material=material)
 
-    section_type = os.environ.get("Section", "ShearFiber")
-    section  = xara.Section(section_type, material, shape, mixed=False)
+    section_type = os.environ.get("Section", "MultiaxialFiber")
+    section  = xara.FrameSection(section_type, material, shape, mixed=False)
 
     A  = shape.cnn()[0,0]
     GA = A*G
@@ -52,7 +52,6 @@ if __name__ == "__main__":
                       order=1
                 )
         model = prism.create_model()
-        model.print(json="a.json")
 
         P = 10
         analyze(model, P)
@@ -65,7 +64,3 @@ if __name__ == "__main__":
         print(f"Uz = {uz:.6f}, Uz theory = {u_euler+u_shear:.6f} ({u_euler:.6f} + {u_shear:.6f})")
 
         model.eval(f"verify value [nodeDisp {end} 3] {u_euler+u_shear:.12f} 1e-6")
-
-    # a = veux.create_artist(model)
-    # a.draw_sections()
-    # veux.serve(a)

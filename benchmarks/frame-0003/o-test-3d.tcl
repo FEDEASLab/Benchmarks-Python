@@ -41,7 +41,7 @@ foreach element $elements {
   node 2  $L 0.0 0.0
 
   fix 1 1 1 1 1 0 0
-  fix 2 0 1 1 0 0 0  
+  fix 2 0 1 1 0 0 0
 
   set sec 1
   section Elastic 1 $E $A $Iz $Iy $G $J

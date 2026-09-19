@@ -1,4 +1,4 @@
-# 2D Cantilever column
+# 2D Cantilever column, point load with shear deformation
 #
 set E 30000.0
 set A 20.0
