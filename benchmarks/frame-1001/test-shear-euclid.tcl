@@ -32,7 +32,8 @@ integrator LoadControl 0.2
 constraints Plain
 numberer RCM
 system BandGen
-analysis Static 
+analysis Static
+
 verify value [analyze 5] 0
 verify value [nodeDisp 6 1] -1 1e-10
 
