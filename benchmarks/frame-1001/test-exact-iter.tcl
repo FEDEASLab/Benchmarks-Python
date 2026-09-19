@@ -33,7 +33,7 @@ element ExactFrame 4  4 5  -section 1 -transform 1
 element ExactFrame 5  5 6  -section 1 -transform 1
 
 
-test EnergyIncr 1e-12 10 1
+test EnergyIncr 1e-12 10 0
 
 pattern Plain 1 Linear {
   load 6 0 0 0 0 0 [expr -4.0*acos(-1)];
