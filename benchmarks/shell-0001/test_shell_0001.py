@@ -1,4 +1,5 @@
-"""Self-contained regression test for benchmark `shell-0001`.
+"""
+Clamped circular plate under a center point load.
 
 The benchmark compares nodal transverse displacement profiles against the
 closed-form Reissner-Mindlin solution for a clamped circular plate under a
