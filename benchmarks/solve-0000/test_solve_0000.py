@@ -32,6 +32,7 @@ def create_model(system):
 
     return model
 
+
 @pytest.mark.parametrize("system", ["FullGeneral", "ProfileSPD", "BandSPD", "FullGeneral"])
 def test_solve(system):
     model = create_model(system)
