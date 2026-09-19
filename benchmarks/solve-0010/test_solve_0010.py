@@ -11,7 +11,7 @@ def test_solve_0010():
 
     ops.fix(1, 1)
 
-    ops.element('Truss', 1, 1, 2, 10.0, 1)
+    ops.element('Truss', 1, (1, 2), 10.0, 1)
     ops.timeSeries('Linear', 1)
     ops.pattern('Plain', 1, 1)
     ops.load(2, 100.0)
