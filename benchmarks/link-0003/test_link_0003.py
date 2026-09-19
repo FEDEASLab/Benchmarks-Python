@@ -10,7 +10,7 @@ import numpy as np
 
 kt = 10 # Translational stiffness
 kr = 20 # Rotational stiffness
-P = 5   # Load
+P =   5 # Load
 L = 10  # Link length
 c = 0.5 # Shear distance
 
