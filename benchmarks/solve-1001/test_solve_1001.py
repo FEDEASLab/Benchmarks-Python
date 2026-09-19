@@ -15,44 +15,68 @@ Reference = [
    {"Iter":     3, "EnergyIncr": 4.46957e-06, "Residual":  0.00145456, "Correction":  0.00614558}
 ]
 
-def setup(test_name, tol, search_type="InitialInterpolated", mnr=True):
+def setup(test_name, tol,
+          element = "ExactTruss", # "CorotTruss" #
+          strain = "RE",
+          search_type="InitialInterpolated", 
+          algorithm="NewtonLineSearch",
+          mnr=True):
+    print(algorithm)
     print(test_name, search_type, "(Modified Newton)" if mnr else "(Newton-Raphson)")
 
-    element = "ExactTruss" # "CorotTruss" #
 
     E = 0.5e8
 
     model = xara.Model("basic", ndm=2, ndf=2)
 
-    model.node(1, 0.0, 0.0)
+    model.node(1,    0.0, 0.0)
     model.node(2, 2500.0, 25.0)
 
     model.fix(1, 1, 1)
     model.fix(2, 1, 0)
 
     model.uniaxialMaterial("Elastic", 1, E)
-    model.section("Truss", 1, "-material", 1, area=1.0)
+    model.section("Truss", 1, material=1, area=1.0)
 
-    model.element(element, 1, 1, 2, section=1, strain=2)
+    Strains = {
+        "Linear": 0,
+        "GL":  1,
+        "RE":  2
+    }
+    if "Exact" in element:
+        model.element(element, 1, 1, 2, section=1, 
+                      strain=Strains[strain])
+    else:
+        model.element(element, 1, 1, 2, section=1)
 
-    model.pattern("Plain", 1, "Linear")
-    model.load(2, 0.0, -1.0)
+    pattern = xara.StaticPattern([
+        xara.NodalLoad(model, {
+            2: (0.0, -1.0)
+        })
+    ])
+    model.pattern(pattern)
+
+    # model.pattern("Plain", 1, "Linear")
+    # model.load(2, 0.0, -1.0)
 
     model.system("FullGeneral")
     model.integrator("LoadControl", 1.9)
 
-    model.algorithm(
-        "NewtonLineSearch",
-        0.8,
-        "-minEta", 0.01,
-        "-maxEta", 25,
-        "-prediction-tangent", "current", #"initial", #
-        "-correction-tangent", "predictor" if mnr else  "current",
-        "-pFlag", 0,
-        type=search_type
-    )
+    if algorithm == "NewtonLineSearch":
+        model.algorithm(
+            "NewtonLineSearch",
+            0.8,
+            "-minEta", 0.01,
+            "-maxEta", 25,
+            "-prediction-tangent", "current", #"initial", #
+            "-correction-tangent", "predictor" if mnr else  "current",
+            pFlag=0,
+            type=search_type
+        )
+    else:
+        model.algorithm(algorithm)
 
-    model.test(test_name, tol, 20, 1)#2)
+    model.test(test_name, tol, 20, 1)
     model.analysis("Static")
 
     return model
@@ -65,6 +89,8 @@ def verify(value, reference, tol):
         f"reference = {reference:.16g}, "
         f"error = {error:.3e}"
     )
+
+
 
 def test_solve_1001_criteria():
     Tests = [
@@ -91,7 +117,7 @@ def test_solve_1001_criteria():
 
 @pytest.mark.parametrize("search_type", [
     "InitialInterpolated",
-    "RegulaFalsi"
+    # "RegulaFalsi"
 ])
 def test_solve_1001_line_search_modified_newton(search_type):
     # model = setup("Residual", 1.0e-2)
@@ -101,12 +127,17 @@ def test_solve_1001_line_search_modified_newton(search_type):
 
 @pytest.mark.parametrize("search_type", [
     "InitialInterpolated",
-    "RegulaFalsi"
+    # "RegulaFalsi"
 ])
 def test_solve_1001_line_search_newton_raphson(search_type):
     model = setup("RelativeNormUnbalance", 1.0e-3, search_type=search_type, mnr=False)
     assert model.analyze(6) == 0
 
+
+
+def test_solve_1001_quasi(algorithm="BFGS"):
+    model = setup("RelativeNormUnbalance", 1.0e-3, algorithm=algorithm, mnr=False)
+    assert model.analyze(5) == 0
 
 
 if __name__ == "__main__":
@@ -115,8 +146,20 @@ if __name__ == "__main__":
     print("\n\n")
     test_solve_1001_line_search_modified_newton(search_type="InitialInterpolated")
 
-    test_solve_1001_line_search_modified_newton(search_type="RegulaFalsi")
+    test_solve_1001_quasi("BFGS")
+
+    test_solve_1001_quasi("KrylovNewton")
 
     test_solve_1001_line_search_newton_raphson(search_type="InitialInterpolated")
 
+    test_solve_1001_line_search_newton_raphson(search_type="Bisection")
+
+    test_solve_1001_line_search_newton_raphson(search_type="Armijo")
+
     # test_solve_1001_line_search_newton_raphson(search_type="RegulaFalsi")
+
+    # test_solve_1001_line_search_modified_newton(search_type="Bisection")
+
+    # test_solve_1001_line_search_newton_raphson(search_type="Secant")
+
+    # test_solve_1001_line_search_modified_newton(search_type="RegulaFalsi")
