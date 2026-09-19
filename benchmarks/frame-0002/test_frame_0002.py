@@ -1,4 +1,6 @@
-
+#
+# Vertical cantilever with terminal loads implemented with FrameLoad
+#
 import xara
 from xara.load import FrameLoad, NodalLoad
 import pytest
