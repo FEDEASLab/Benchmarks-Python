@@ -177,8 +177,9 @@ def _run_twist_column(element, load_type="center", basis="local"):
 
     if load_type == "offset":
         if basis == "local":
-            # In local coordinates, use r = (0, b/2, 0), F = (0, 0, F)
-            # so that r x F = (+T, 0, 0), i.e. positive torsion.
+            # In local coordinates:
+            #   r = (0, b/2, 0), F = (0, 0, F)
+            # so that r x F = (+T, 0, 0)
             load = FrameLoad(
                 model,
                 shape="Point",
