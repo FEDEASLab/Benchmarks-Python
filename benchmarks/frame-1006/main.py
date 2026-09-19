@@ -1,13 +1,10 @@
 #
 # Cantilever
 #
-import os
-import time
 import xara
 
 # External libraries
 import numpy as np
-import matplotlib.pyplot as plt
 
 
 def create_cantilever(shape,
