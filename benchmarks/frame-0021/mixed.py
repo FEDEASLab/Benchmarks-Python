@@ -7,6 +7,7 @@ import os
 import veux
 from veux.motion import Motion
 from xsection.analysis import SaintVenantSectionAnalysis
+from xsection._benchmarks import load_shape
 from xsection.library import WideFlange, HollowRectangle, Channel, Rectangle, Circle
 
 import xara
@@ -27,75 +28,7 @@ from plots import (
     plot_kinematics
 )
 from model import create_cantilever, analyze
-
-class Shaft:
-    def __init__(self, case, L, shape, warp_type=None, sv=None):
-        if warp_type is None:
-            warp_type = "NT"
-        
-        self.warp_type = warp_type
-        if sv is None:
-            sv = SaintVenantSectionAnalysis(shape)
-
-        # J = shape._analysis.torsion_constant()
-
-        GJ = sv.twist_rigidity() # = GIo - GJv
-        # E = material["E"]
-        GJv  = shape.cvv()[0,0]
-        ECw  = shape.cww()[0,0]
-        GIo  = GJ + GJv
-        if warp_type == "NT":
-            eta = 1 + GJ/GJv
-            GJvm = GJ
-        else:
-            E = shape.material["E"]
-            G = shape.material["G"]
-            EJa = sv.css()*E/G
-            b = ECw/EJa
-
-            Jm = (GJv - b*ECw)
-            eta_bar = Jm/(GJv-2*b*ECw+b**2*EJa)
-            eta_hat = (GIo - eta_bar*Jm)/(GJv - eta_bar*Jm)
-            if False:
-                eta = 1 + GJ/(ECw**2/EJa)
-            else:
-                eta = eta_hat
-
-            print(f"eta_bar = {eta_bar}, eta_hat = {eta_hat}, eta = { 1 + (E/G)*GJ/(ECw**2/EJa)}")
-            # assert abs(eta_bar - 1.0) < 1e-10, f"Unexpected eta_bar = {eta_bar}"
-            # assert abs(eta_hat - eta) < 1e-10, f"Unexpected eta_hat = {eta_hat}"
-
-
-            if True:
-                print(f"Jw = {ECw/E}, Ja = {EJa/E}, Jv = {GJv/G}, Jm = {Jm/G}, eta = {eta}")
-
-        lam = np.sqrt(GJ/(eta*ECw))
-
-        self.GJ = GJ
-        self.eta = eta
-        self.lam = lam
-
-        if case == "b":
-            self.C1 = -np.tanh(lam*L)
-            self.C2 = -self.C1
-            self.C3 = -1
-        elif case == "c":
-            self.C1 = (1- np.cosh(lam*L))/np.sinh(lam*L)
-            self.C2 = -self.C1
-            self.C3 = -1
-        elif case == "a":
-            self.C1 = 0
-            self.C2 = 0
-            self.C3 = 0
-
-    def twist(self, x, T)->float:
-        return T/(self.GJ*self.lam*self.eta)*(
-            self.C1 \
-                + self.C2*np.cosh(self.lam*x) \
-                    + self.C3*np.sinh(self.lam*x) \
-                        + x*self.lam*self.eta
-        )
-
+from shaft import Shaft
 
 if __name__ == "__main__":
     th = 0.1 #0.05
@@ -112,13 +45,13 @@ if __name__ == "__main__":
     # Mmax   = 1.2e3
 
     element = os.environ.get("Element", "ExactFrame")
-    section = os.environ.get("Section", "ShearFiber")
+    section = os.environ.get("Section", "MixedFiber")
 
     WarpTypes = os.environ.get("WarpType", "NT,NR").split(",")
     Boundary  = os.environ.get("Boundary", "b,c").split(",")
 
 
-    Shapes = os.environ.get("Shape", "w,h,c,r").split(",")
+    Shapes = os.environ.get("Shape", "w,h,r").split(",")
     mesh_scale = 1/int(os.environ.get("Mesh", "200"))
 
     for shape_name in Shapes:
@@ -192,10 +125,14 @@ if __name__ == "__main__":
                         mesh_scale=1/8#0
                     )
         else:
-            raise ValueError("Unknown shape")
+            shape = load_shape(shape_name, mesh_scale=1/10, mesher="gmsh", material=material)
+            shape = shape.translate(-shape._analysis.shear_center())
+            # shape = shape.translate(-shape.centroid)
 
 
         # print(shape.summary())
+
+        # veux.serve(veux.render(shape.model))
 
         sv = SaintVenantSectionAnalysis(shape)
 
