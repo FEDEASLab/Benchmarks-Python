@@ -9,6 +9,7 @@
 # Computers and Structures, 1997. Example 1.
 # and seismo-struct (Example 10)
 # SeismoStruct, Verification Report For Version 6, 2012. Example 11.
+
 import opensees.openseespy as ops
 
 from math import asin, sqrt
