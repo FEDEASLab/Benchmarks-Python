@@ -21329,8 +21329,8 @@ analyze 1
 analyze 1 
 analyze 1
 
-puts [nodeDisp 20 4]
-puts [nodeDisp 20 7]
+# puts [nodeDisp 20 4]
+# puts [nodeDisp 20 7]
 
-puts [eleResponse 20 section 5 resultant]
+# puts [eleResponse 20 section 5 resultant]
 
