@@ -1,3 +1,5 @@
+# Verification of joint offsets in nonlinear frame transformations
+#
 # Cantilever beam with offset axial load
 #
 #   e
@@ -29,9 +31,12 @@ Pcr = E*I*np.pi**2/(L*2)**2
 
 
 def create_model_offset(transform, element, offset=True, nen=2, ne=6, ndm=3):
+    """
+    offset:
+       True:  offset at joint
+    """
 
     nn = ne*(nen-1)+1
-
 
     section = xara.FrameSection("Elastic",
       E  = E,
