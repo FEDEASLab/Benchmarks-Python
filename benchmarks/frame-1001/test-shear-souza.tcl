@@ -14,7 +14,7 @@ fix 6 0 0 1 1 1 0
 
 section FrameElastic 1 -E 1.0 -G 1.0 -A 2.0 -J 2.0 -Iy 2.0 -Iz 2.0 -Ay 2.0 -Az 2.0 
 
-geomTransf Corotational 1 0 0 1 
+geomTransf Corotational01 1 0 0 1 
 
 element $element 1  1 2  -section 1 -transform 1 -shear 1
 element $element 2  2 3  -section 1 -transform 1 -shear 1
