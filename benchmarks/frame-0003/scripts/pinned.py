@@ -6,20 +6,6 @@ import matplotlib.pyplot as plt
 import veux, veux.motion
 
 
-class Span15:
-    # Encastred beam with distributed load
-    def __init__(self, w, L, E, I, k=1, A=0, G=0):
-        self.w = w
-        self.L = L
-        self.E = E
-        self.I = I
-        self.k = k
-        
-        self.uy = lambda x: \
-            w*x**2/(24*E*I)*(L - x)**2 - \
-                ((w/(k*G*A)*L**2/24*(1 - 12*x/L + 12*(x/L)**2) + w*L**2/(24*G*A*k)) if G and A else 0)
-
-
 class Span1:
     # Simple span with distributed load
     def __init__(self, w, L, E, I, k=1, A=0, G=0):
@@ -61,7 +47,7 @@ def analyze(model, prism, w, basis):
                     basis = basis,
                     force = [0, 0, w],
                     pattern=1,
-                    elements=list(range(1, divisions+1))
+                    elements=list(range(1, divisions))
         )
 
 
