@@ -17,7 +17,7 @@ def test_solve_0010():
     ops.load(2, 100.0)
 
     ops.constraints('Transformation')
-    ops.numberer('ParallelPlain')
+    ops.numberer('Plain')
     ops.test('NormDispIncr', 1e-6, 6, 2)
     ops.system('ProfileSPD')
     ops.integrator('Newmark', 0.5, 0.25)
@@ -32,7 +32,7 @@ def test_solve_0010():
     approx_vtime = 0.0001 + 0.001  # One step at target, then one step at maximum
     assert 0.99 < time / approx_vtime < 1.01,  (time,  approx_vtime)
     ops.setTime(0.0)
-    # Can still run a non-variable analysis - since analyze function has multiple dispatch.
+    # Can still run a non-variable analysis
     ops.analyze(5, 0.0001)
     time = ops.getTime()
     print(f'time: ', ops.getTime())
