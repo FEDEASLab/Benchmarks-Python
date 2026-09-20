@@ -1,5 +1,6 @@
-
-
+#
+# Check that variable time-step dynamic analysis works as expected.
+#
 import xara
 
 def test_solve_0010():
