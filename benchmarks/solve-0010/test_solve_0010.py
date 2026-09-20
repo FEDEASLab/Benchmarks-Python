@@ -17,7 +17,7 @@ def test_solve_0010():
     ops.load(2, 100.0)
 
     ops.constraints('Transformation')
-    ops.numberer('Plain')
+    ops.numberer('ParallelPlain')
     ops.test('NormDispIncr', 1e-6, 6, 2)
     ops.system('ProfileSPD')
     ops.integrator('Newmark', 0.5, 0.25)
