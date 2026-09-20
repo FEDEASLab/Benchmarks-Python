@@ -4,12 +4,12 @@ set I 1400
 set A   20
 set L  100
 
-foreach system {Umfpack BandSPD FullGen ProfileSPD  SparseGen} {
-  model  -ndm 2 -ndf 3
-  node 1  0 0 
-  node 2 $L 0 
-  fix 1 1 1 1 
-  fix 2 1 1 1 
+foreach system {Umfpack BandSPD FullGen ProfileSPD SparseGen BandGen} {
+  model basic -ndm 2 -ndf 3
+  node 1  0 0
+  node 2 $L 0
+  fix 1 1 1 1
+  fix 2 1 1 1
   geomTransf Linear 1 
   element PrismFrame 1 1 2 $A $E $I 1 
 
