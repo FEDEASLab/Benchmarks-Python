@@ -16,23 +16,23 @@ def create_model():
     ops.fix(0,1)
     ops.node(1,0)
     ops.node(2,0)
-    
+
     ops.uniaxialMaterial('Steel01',1,10,10,0.1)
     ops.uniaxialMaterial('Steel01',2,4,2,0.5)
     ops.uniaxialMaterial('Steel01',3,7,7,0)
-    
+
     # Spring elements
     ops.element('zeroLength',1,0,1,'-mat',1,'-dir',1)
     ops.element('zeroLength',2,1,2,'-mat',2,'-dir',1)
     ops.element('zeroLength',3,0,2,'-mat',3,'-dir',1)
-    
+
     # Dummy elastic material
     ops.uniaxialMaterial('Elastic',0,0)
-    
+
     # Diagonal '-1' stiffness
     ops.uniaxialMaterial('Penalty',4,0,-1,'-noStress')
     ops.element('zeroLength',4,0,1,'-mat',4,'-dir',1)
-    
+
     # Off-diagonal '+0.5' stiffness
     ops.uniaxialMaterial('Penalty',5,0,-0.5,'-noStress')
     ops.element('zeroLength',5,1,2,'-mat',5,'-dir',1)
