@@ -8,7 +8,6 @@ tqdm = lambda x: x
 from pathlib import Path
 import matplotlib.pyplot as plt
 import numpy as np
-import re
 
 import xara
 from xara.helpers import find_node, find_nodes
@@ -68,22 +67,6 @@ def model_edges(model):
         for i, j in ((0, 1), (1, 2), (2, 3), (3, 0)):
             edges.add(tuple(sorted((nodes[i], nodes[j]))))
     return sorted(edges)
-
-
-# # Parameters
-
-# accel_x = parse_accelerogram(KOYNA_DIR / 'data' / 'koyna_x.txt')
-# accel_y = parse_accelerogram(KOYNA_DIR / 'data' / 'koyna_y.txt')
-
-# dt_data = 0.01
-# n_steps = len(accel_x)-1
-# duration = n_steps * dt_data
-# time = np.linspace(0,duration,len(accel_x))
-# accel_x_path = write_series_file(OUT / 'koyna_x_series.txt', accel_x)
-# accel_y_path = write_series_file(OUT / 'koyna_y_series.txt', accel_y)
-
-# print(f'Input duration: {duration:.3f} s')
-# print(f'Data time step: {dt_data:.3f} s')
 
 #
 # Model
@@ -158,9 +141,7 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
 
 #
 # Gravity, Eigenvalues, and Damping
-# 
-
-
+#
 def static_analysis(model, added_masses, hydro_loads):
 
     print(f'Upstream water-loaded nodes: {len(hydro_loads)}')
@@ -188,7 +169,6 @@ def static_analysis(model, added_masses, hydro_loads):
 #
 # Transient Analysis
 #
-
 def dynamic_analysis(koyna, model, accel_x, accel_y, dt_data, duration, units):
     crest = koyna.crest_node(model)
     model.wipeAnalysis()
@@ -218,14 +198,6 @@ def dynamic_analysis(koyna, model, accel_x, accel_y, dt_data, duration, units):
             break
             # raise RuntimeError(f"analysis failed at time {model.getTime()}")
         crest_disp.append(model.nodeDisp(crest,1))
-        #crest_acc.append(model.nodeAccel(crest,1))
-
-
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.plot(np.linspace(0,duration,len(crest_disp)),np.array(crest_disp)/mm)
-    ax.set_xlabel('Time')
-    ax.set_ylabel('Creat displacement, mm')
-    ax.grid(True)
 
 
     M = model.getTangent(m=1, c=0, k=0)
@@ -281,27 +253,3 @@ class KoynaDam:
             print(f'  Mode {i}: {period:.6e}')
         print(f'Stiffness-proportional damping beta_k = {beta_k:.6e}')
 
-
-if __name__ == "__main__":
-    import sys
-    element = "Q4"
-    if len(sys.argv) > 1:
-        element = sys.argv[1]
-
-    model = create_model(element)
-
-    model.print(json=f"{element}.json")
-
-
-    crest = crest_node(model)
-
-
-    print(f'Nodes: {len(model.getNodeTags())}')
-    print(f'Elements: {len(model.getEleTags())}')
-    print(f'Crest node: {crest}')
-
-    static_analysis(model)
-
-    dynamic_analysis(model)
-
-    plt.show()
