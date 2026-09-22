@@ -19,7 +19,7 @@ def create_column(boundary="pin-pin"):
 
     ne              = 10 # Number of elements discretizing the column
     ElemName        = "ForceBeamColumn"
-    GeomTransfType  = "Corotational"
+    GeomTransfType  = "Corotational01"
 
 
     nIP = 3 # number of integration points along each element
