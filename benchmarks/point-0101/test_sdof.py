@@ -1,7 +1,7 @@
 import sys
 from pathlib import Path
 import numpy as np
-from numpy import cos,sin,sqrt,pi,exp, loadtxt
+from numpy import cos,sin,sqrt,pi,exp
 import xara
 
 # Linear Elastic SINGLE DOF Model Transient Analysis
@@ -12,108 +12,108 @@ import xara
 # Prentice Hall, 1995.
 #   - Sections 3.1, Section 3.2 and Section 6.4
 
-def ReadRecordAT2(inFilename):
-    """
-    A procedure which parses a ground motion record from the PEER
-    strong motion database by finding dt in the record header, then
-    echoing data values to the output file.
+# def ReadRecordAT2(inFilename):
+#     """
+#     A procedure which parses a ground motion record from the PEER
+#     strong motion database by finding dt in the record header, then
+#     echoing data values to the output file.
 
-    Formal arguments
-       inFilename -- file which contains PEER strong motion record
-       outFilename -- file to be written in format G3 can read
-    Return values
-       dt -- time step determined from file header
-       nPts -- number of data points from file header
+#     Formal arguments
+#        inFilename -- file which contains PEER strong motion record
+#        outFilename -- file to be written in format G3 can read
+#     Return values
+#        dt -- time step determined from file header
+#        nPts -- number of data points from file header
 
-    Assumptions
-       The header in the PEER record is, e.g., formatted as 1 of following:
-     1) new PGA database
-        PACIFIC ENGINEERING AND ANALYSIS STRONG-MOTION DATA
-         IMPERIAL VALLEY 10/15/79 2319, EL CENTRO ARRAY 6, 230
-         ACCELERATION TIME HISTORY IN UNITS OF G
-         3930 0.00500 NPTS, DT
+#     Assumptions
+#        The header in the PEER record is, e.g., formatted as 1 of following:
+#      1) new PGA database
+#         PACIFIC ENGINEERING AND ANALYSIS STRONG-MOTION DATA
+#          IMPERIAL VALLEY 10/15/79 2319, EL CENTRO ARRAY 6, 230
+#          ACCELERATION TIME HISTORY IN UNITS OF G
+#          3930 0.00500 NPTS, DT
 
-      2) old SMD database
-        PACIFIC ENGINEERING AND ANALYSIS STRONG-MOTION DATA
-         IMPERIAL VALLEY 10/15/79 2319, EL CENTRO ARRAY 6, 230
-         ACCELERATION TIME HISTORY IN UNITS OF G
-         NPTS=  3930, DT= .00500 SEC
-    """
-
-
-    dt = 0.0
-    npts = 0
-
-    # Open the input file and catch the error if it can't be read
-    inFileID = open(inFilename, 'r')
-
-    # Open output file for writing
-    data = []
-
-    # Flag indicating dt is found and that ground motion
-    # values should be read -- ASSUMES dt is on last line
-    # of header!!!
-    flag = 0
-
-    # Look at each line in the file
-    for line in inFileID:
-        if line == '\n':
-            # Blank line --> do nothing
-            continue
-        elif flag == 1:
-            # Echo ground motion values to output file
-            if "end" in line.lower():
-                break
-            data.extend(map(float, line.split()))
+#       2) old SMD database
+#         PACIFIC ENGINEERING AND ANALYSIS STRONG-MOTION DATA
+#          IMPERIAL VALLEY 10/15/79 2319, EL CENTRO ARRAY 6, 230
+#          ACCELERATION TIME HISTORY IN UNITS OF G
+#          NPTS=  3930, DT= .00500 SEC
+#     """
 
 
-        else:
-            # Search header lines for dt
-            words = line.split()
-            lengthLine = len(words)
+#     dt = 0.0
+#     npts = 0
 
-            if lengthLine >= 4:
+#     # Open the input file and catch the error if it can't be read
+#     inFileID = open(inFilename, 'r')
 
-                if words[0] == 'NPTS=':
-                    # old SMD format
-                    for word in words:
-                        if word != '':
-                            # Read in the time step
-                            if flag == 1:
-                                dt = float(word)
-                                break
+#     # Open output file for writing
+#     data = []
 
-                            if flag == 2:
-                                npts = int(word.strip(','))
-                                flag = 0
+#     # Flag indicating dt is found and that ground motion
+#     # values should be read -- ASSUMES dt is on last line
+#     # of header!!!
+#     flag = 0
 
-                            # Find the desired token and set the flag
-                            if word == 'DT=' or word == 'dt':
-                                flag = 1
-
-                            if word == 'NPTS=':
-                                flag = 2
+#     # Look at each line in the file
+#     for line in inFileID:
+#         if line == '\n':
+#             # Blank line --> do nothing
+#             continue
+#         elif flag == 1:
+#             # Echo ground motion values to output file
+#             if "end" in line.lower():
+#                 break
+#             data.extend(map(float, line.split()))
 
 
-                elif words[-1] == 'DT':
-                    # new NGA format
-                    count = 0
-                    for word in words:
-                        if word != '':
-                            if count == 0:
-                                npts = int(word)
-                            elif count == 1:
-                                dt = float(word)
-                            elif word == 'DT':
-                                flag = 1
-                                break
+#         else:
+#             # Search header lines for dt
+#             words = line.split()
+#             lengthLine = len(words)
 
-                            count += 1
+#             if lengthLine >= 4:
+
+#                 if words[0] == 'NPTS=':
+#                     # old SMD format
+#                     for word in words:
+#                         if word != '':
+#                             # Read in the time step
+#                             if flag == 1:
+#                                 dt = float(word)
+#                                 break
+
+#                             if flag == 2:
+#                                 npts = int(word.strip(','))
+#                                 flag = 0
+
+#                             # Find the desired token and set the flag
+#                             if word == 'DT=' or word == 'dt':
+#                                 flag = 1
+
+#                             if word == 'NPTS=':
+#                                 flag = 2
 
 
-    inFileID.close()
+#                 elif words[-1] == 'DT':
+#                     # new NGA format
+#                     count = 0
+#                     for word in words:
+#                         if word != '':
+#                             if count == 0:
+#                                 npts = int(word)
+#                             elif count == 1:
+#                                 dt = float(word)
+#                             elif word == 'DT':
+#                                 flag = 1
+#                                 break
 
-    return dt, npts, np.array(data)
+#                             count += 1
+
+
+#     inFileID.close()
+
+#     return dt, npts, np.array(data)
 
 
 print("sdofTransient.tcl: Verification of Elastic SDOF systems (Chopra)")
@@ -166,6 +166,7 @@ def harmonic_undamped(tCurrent, w, wn, P, K):
 
     return P/K * 1.0/(1 - (w*w)/(wn*wn)) * (sin(w*tCurrent) - (w/wn)*sin(wn*tCurrent))
 
+
 def harmonic_damped(t, w, wn, dampRatio, P, K):
     wd = (wn*sqrt(1-dampRatio*dampRatio))
     wwn2 = (w*w)/(wn*wn)
@@ -195,8 +196,11 @@ def test_earthquake():
     dt  = 0.01 # analysis time step
 
     dir = Path(__file__, "..").resolve()
-    given_file = str(dir/"elCentro.at2")
-    dt, nPts, accel = ReadRecordAT2(given_file)
+
+    dir = Path(__file__, "..").resolve()
+    dt = 0.02
+    plain_file = str(dir/"elCentro.txt")
+    accel = np.loadtxt(plain_file)
 
     # print table header
     print("%15s%15s%15s%15s"%('Period', 'Damping', 'OpenSees', 'Reference'))
