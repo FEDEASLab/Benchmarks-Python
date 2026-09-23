@@ -12,18 +12,18 @@ from math import sqrt, pi
 import pytest
 import xara
 
-# ── tolerances ──────────────────────────────────────────────────────────────
+# tolerances
 
 TOL = 1.0e-3
 DT  = 0.1
 
-# ── model properties (shared by all cases) ──────────────────────────────────
+# model properties (shared by all cases)
 
 M          = 0.2533
 K          = 10.0
 DAMP_RATIO = 0.05
 
-# ── reference data ──────────────────────────────────────────────────────────
+# reference data
 
 LINEAR_CASES = {
     "average_acceleration": {
@@ -56,7 +56,7 @@ NONLINEAR_CASES = {
 }
 
 
-# ── helpers ─────────────────────────────────────────────────────────────────
+# helpers
 
 def _build_model(yield_disp: float = 0.0) -> xara.Model:
     """Build a 1-DOF SDOF model (linear when *yield_disp* is 0)."""
@@ -118,7 +118,7 @@ def _assert_close(computed, expected, label, tol=TOL):
         )
 
 
-# ── tests ───────────────────────────────────────────────────────────────────
+# tests
 
 class TestNewmarkLinear:
     """Chopra §5.4 – Newmark on a linear SDOF system."""
