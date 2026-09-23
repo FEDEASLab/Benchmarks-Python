@@ -2,17 +2,14 @@
 # Koyna Dam 
 #
 
-# from tqdm import tqdm
 tqdm = lambda x: x
 
 from pathlib import Path
-import matplotlib.pyplot as plt
 import numpy as np
 
 import xara
 from xara.helpers import find_node, find_nodes
 
-import veux
 
 cwd = Path.cwd()
 if (cwd / 'data').exists():
@@ -23,19 +20,19 @@ OUT.mkdir(parents=True, exist_ok=True)
 
 
 
-def support_nodes(model):
-    return [tag for tag in model.getNodeTags() if abs(model.nodeCoord(tag)[1]) < 1.0e-9]
-
-
-def upstream_face_nodes(model):
+def upstream_face_nodes(koyna, model):
     return sorted(
-        [(tag, model.nodeCoord(tag)) for tag in model.getNodeTags() if abs(model.nodeCoord(tag)[0]) < 1.0e-9],
+        [(tag, model.nodeCoord(tag)) 
+         for tag in model.getNodeTags() if abs(model.nodeCoord(tag)[0]) < 1.0e-9],
         key=lambda item: item[1][1],
     )
 
 
-def hydrodynamic_loading(model, h_water, rho_water, thickness, gravity):
-    face_nodes = upstream_face_nodes(model)
+def hydrodynamic_loading(koyna, model, h_water, rho_water, thickness):
+    gravity = koyna.units.gravity
+
+    face_nodes = upstream_face_nodes(koyna, model)
+
     added_masses = {}
     hydro_loads = {}
 
@@ -86,7 +83,7 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
     H_base = koyna.H_base
     H_top  = koyna.H_top
     thickness = koyna.thickness
-    h_water = koyna.h_water
+
 
     rho = material.asdict().get("density")
 
@@ -103,19 +100,19 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
 
     plane_args = {"section": section, "b": [0.0, -rho*units.gravity]}
 
-    base_surface = model.surface(
+    model.surface(
         (nx, ny_base),
         element=element,
         args=plane_args,
         points={
-            1: (0.0, 0.0),
-            2: (L_base, 0.0),
-            3: (19.25 * m, H_base),
+            1: (     0.0, 0.0),
+            2: (  L_base, 0.0),
+            3: ( 19.25*m, H_base),
             4: (0.0, H_base),
         },
     )
 
-    crest_surface = model.surface(
+    model.surface(
         (nx, ny_top),
         element=element,
         args=plane_args,
@@ -127,17 +124,11 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
         },
     )
 
-    for tag in support_nodes(model):
+    for tag in find_nodes(model, y=0.0):
         model.fix(tag, 1, 1)
 
-    added_masses, hydro_loads = hydrodynamic_loading(model, 
-                                                     koyna.h_water, 
-                                                     koyna.rho_water, 
-                                                     koyna.thickness, 
-                                                     units.gravity)
-    for tag, (mx, my) in added_masses.items():
-        model.mass(tag, mx, my)
     return model 
+
 
 #
 # Gravity, Eigenvalues, and Damping
@@ -145,6 +136,9 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
 def static_analysis(model, added_masses, hydro_loads):
 
     print(f'Upstream water-loaded nodes: {len(hydro_loads)}')
+
+    for tag, (mx, my) in added_masses.items():
+        model.mass(tag, mx, my)
 
     model.pattern('Plain', 1,'Constant')
     for tag, (fx, fy) in hydro_loads.items():
@@ -214,7 +208,10 @@ class KoynaDam:
         self.L_base = 70.0 * m
         self.H_base = 66.5 * m
         self.H_top  = 36.5 * m
-        self.thickness = 1.0 # TODO
+        self.S_face = 1/24
+        self.S_base = 0.725/1
+        self.S_top  = 0.153/1
+        self.thickness = 1.0 * m
         self.h_water = 91.75 * m
         self.rho_water = 1000.0 * kg / (m ** 3)
 
@@ -230,12 +227,13 @@ class KoynaDam:
                             units=self.units, 
                             mesh=self.mesh)
 
+
     def static_analysis(self, model):
-        added_masses, hydro_loads = hydrodynamic_loading(model, 
+        added_masses, hydro_loads = hydrodynamic_loading(self,
+                                                         model, 
                                                          self.h_water, 
                                                          self.rho_water, 
-                                                         self.thickness, 
-                                                         self.units.gravity)
+                                                         self.thickness)
         return static_analysis(model, added_masses, hydro_loads)
 
 
