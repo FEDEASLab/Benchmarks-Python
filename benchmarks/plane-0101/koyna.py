@@ -81,6 +81,7 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
 
     L_base = koyna.L_base
     H_base = koyna.H_base
+    L_top  = koyna.L_top
     H_top  = koyna.H_top
     thickness = koyna.thickness
 
@@ -107,7 +108,7 @@ def create_model(koyna, material, element="Q4", units=None, mesh=None):
         points={
             1: (     0.0, 0.0),
             2: (  L_base, 0.0),
-            3: ( 19.25*m, H_base),
+            3: (  L_top, H_base),
             4: (0.0, H_base),
         },
     )
@@ -205,9 +206,10 @@ class KoynaDam:
         m  = units.meter
         kg = units.kilogram
 
-        self.L_base = 70.0 * m
-        self.H_base = 66.5 * m
-        self.H_top  = 36.5 * m
+        self.L_base = 70.00 * m
+        self.H_base = 66.50 * m
+        self.H_top  = 36.50 * m
+        self.L_top  = 19.25 * m
         self.S_face = 1/24
         self.S_base = 0.725/1
         self.S_top  = 0.153/1
