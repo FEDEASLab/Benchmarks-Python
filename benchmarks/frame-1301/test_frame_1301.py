@@ -1,7 +1,7 @@
 # Example from [1] 
 #
 # [1] C. M. Perez, 
-#     “Nonlinear modeling of frame members for rapid infrastructure assessment,” 
+#     "Nonlinear modeling of frame members for rapid infrastructure assessment,"
 #     Ph.D., University of California, Berkeley, Berkeley, CA, 2026.
 #
 import jax
