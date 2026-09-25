@@ -16,10 +16,10 @@ d = 12
 b = 6
 Iy = b*d**3/12
 Iz = d*b**3/12
-J = Iy + Iz
-A = 1e3
-Ay = 5/6*b*d
-Az = Ay
+J  = Iy + Iz
+A  = 1e3
+Ay  = 5/6*b*d
+Az  = Ay
 
 #     V.    V.      N
 F = [1000, 2000,   60]
@@ -115,8 +115,8 @@ def solution(shape, shear=False):
         GAy = shape["G"]*shape["Ay"]
         GAz = shape["G"]*shape["Az"]
 
-        UX += FX*L/GAy #- MY/GAz
-        UY += FY*L/GAz #+ MZ/GAy
+        UX += FX*L/GAy
+        UY += FY*L/GAz
 
     return list(map(float, [UX, UY, uz, rx, ry, rz]))
 
@@ -131,7 +131,7 @@ def test_terminal_loads_euler(load_type):
         "Iz": Iz,
         "J":  J
     }
-    model = create_prism(shape, load_type=load_type)
+    model = create_prism(shape, load_type=load_type, shear=0)
     Umodel = model.nodeDisp(2)
     Usoln = solution(shape)
     assert Umodel[0] == pytest.approx(Usoln[0], abs=1e-10)
