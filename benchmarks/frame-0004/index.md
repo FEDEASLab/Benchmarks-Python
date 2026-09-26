@@ -13,6 +13,7 @@ u = \frac{w L^4}{192 E I}
 \right)
 $$
 
+
 $$
 M = \frac{w L^2}{8}\left[\frac{2(\tan \lambda - \lambda)}{\lambda^2\left(\frac{1}{2\lambda} - \frac{1}{\tan 2\lambda}\right)}\right]
 $$

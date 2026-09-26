@@ -3,6 +3,10 @@
 #
 # Adapted from test_BeamLoad3D.py
 #
+# TODO
+# - make this fixed-pinned
+# - test FrameLoad
+#
 import xara
 from math import isclose
 

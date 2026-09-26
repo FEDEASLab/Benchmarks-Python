@@ -35,7 +35,7 @@ i_minor = np.array([0., 0., 1.])
 i_axial = np.array([1., 0., 0.])
 
 
-def create_prism(shape, shear=0, load_type="global"):
+def create_prism(shape, shear=0, load_type="global", element="ForceFrame"):
 
     model = xara.Model(ndm=3, ndf=6)
 
@@ -44,12 +44,14 @@ def create_prism(shape, shear=0, load_type="global"):
 
     model.fix(1, (1, 1, 1, 1, 1, 1))
 
-    model.geomTransf("Linear", 1, (0, 1, 0))
+    transform = "Linear"
+
+    model.geomTransf(transform, 1, (0, 1, 0))
 
     section = xara.FrameSection("Elastic", **shape)
     model.section(section)
 
-    model.element("ForceFrame", 1, (1, 2), 
+    model.element(element, 1, (1, 2), 
                   section=section, 
                   shear=shear,
                   transform=1)
@@ -121,8 +123,10 @@ def solution(shape, shear=False):
     return list(map(float, [UX, UY, uz, rx, ry, rz]))
 
 
+
+@pytest.mark.parametrize("element", ["ForceFrame"])
 @pytest.mark.parametrize("load_type", ["global", "local", "node"])
-def test_terminal_loads_euler(load_type):
+def test_terminal_loads_euler(load_type, element):
     shape = {
         "E":  E,
         "G":  G,
@@ -131,7 +135,10 @@ def test_terminal_loads_euler(load_type):
         "Iz": Iz,
         "J":  J
     }
-    model = create_prism(shape, load_type=load_type, shear=0)
+    model = create_prism(shape, 
+                         load_type=load_type, 
+                         shear=0,
+                         element=element)
     Umodel = model.nodeDisp(2)
     Usoln = solution(shape)
     assert Umodel[0] == pytest.approx(Usoln[0], abs=1e-10)
@@ -143,12 +150,13 @@ def test_terminal_loads_euler(load_type):
     assert Umodel[5] == pytest.approx(Usoln[5], abs=1e-10)
 
 
-    print("Solution: ", Usoln)
-    print("Result:   ", Umodel)
+    print("    Solution: ", Usoln)
+    print("    Result:   ", Umodel)
 
 
+@pytest.mark.parametrize("element", ["ForceFrame", "ShearFrame"])
 @pytest.mark.parametrize("load_type", ["global", "local", "node"])
-def test_terminal_loads_shear(load_type):
+def test_terminal_loads_shear(load_type, element):
     shape = {
         "E":  E,
         "G":  G,
@@ -159,27 +167,52 @@ def test_terminal_loads_shear(load_type):
         "Iz": Iz,
         "J":  J
     }
-    model = create_prism(shape, load_type=load_type, shear=1)
+    model = create_prism(shape, 
+                         load_type=load_type, 
+                         shear=1, 
+                         element=element)
     Umodel = model.nodeDisp(2)
     Usoln = solution(shape, shear=True)
-    assert Umodel[0] == pytest.approx(Usoln[0], abs=1e-10)
-    assert Umodel[1] == pytest.approx(Usoln[1], abs=1e-10)
-    assert Umodel[2] == pytest.approx(Usoln[2], abs=1e-10)
 
-    assert Umodel[3] == pytest.approx(Usoln[3], abs=1e-10)
-    assert Umodel[4] == pytest.approx(Usoln[4], abs=1e-10)
-    assert Umodel[5] == pytest.approx(Usoln[5], abs=1e-10)
-
-    print("Solution: ", Usoln)
-    print("Result:   ", Umodel)
+    print("   Solution: ", Usoln)
+    print("   Result:   ", Umodel)
     for i in range(6):
-        print(f"    U[{i}]: ", (Umodel[i] - Usoln[i])/Usoln[i]*100, "%")
+        print(f"      U[{i}]: ", (Umodel[i] - Usoln[i])/Usoln[i]*100, "%")
 
+    # Reduce tolerance since 2-node shear element will be poor
+    if "Shear" in element:
+        utol = 0.3
+        rtol = 1e-8 if load_type == "node" else utol
+        assert Umodel[0] == pytest.approx(Usoln[0], rel=utol)
+        assert Umodel[1] == pytest.approx(Usoln[1], rel=utol)
+        # Axial extension is expected to be accurate even with shear elements
+        assert Umodel[2] == pytest.approx(Usoln[2], rel=1e-6)
+
+        assert Umodel[3] == pytest.approx(Usoln[3], rel=rtol)
+        assert Umodel[4] == pytest.approx(Usoln[4], rel=rtol)
+        # TODO(ShearFrame): Torsional rotation
+        if load_type == "node":
+            assert Umodel[5] == pytest.approx(Usoln[5], rel=1e-6)
+    else:
+        tol = 1e-10
+        assert Umodel[0] == pytest.approx(Usoln[0], abs=tol)
+        assert Umodel[1] == pytest.approx(Usoln[1], abs=tol)
+        assert Umodel[2] == pytest.approx(Usoln[2], abs=tol)
+
+        assert Umodel[3] == pytest.approx(Usoln[3], abs=tol)
+        assert Umodel[4] == pytest.approx(Usoln[4], abs=tol)
+        # Torsional rotation
+        assert Umodel[5] == pytest.approx(Usoln[5], abs=tol)
 
 
 if __name__ == "__main__":
     for load_type in ["node", "global", "local"]:
         print(f"\nRunning load_type={load_type}")
-        test_terminal_loads_euler(load_type)
+        test_terminal_loads_euler(load_type, "ForceFrame")
         print()
-        test_terminal_loads_shear(load_type)
+        for element in "ForceFrame", "ShearFrame":
+            print(f"  Running element={element}")
+            test_terminal_loads_shear(load_type, element)
+            print()
+        print()
+
