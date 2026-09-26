@@ -76,7 +76,7 @@ def analyze(element, transform):
 
     model.system('Umfpack')
     model.integrator("LoadControl", Pmax/500)
-    model.test("NormDispIncr", 1e-12, 10, 2)
+    model.test("Energy", 1e-16, 15, 0)
 #   model.test('NormUnbalance',1e-6,100,1)
     model.algorithm("Newton")
     model.analysis("Static")
@@ -96,7 +96,7 @@ def analyze(element, transform):
 
 
 def test_exactframe():
-    analyze(element = "ExactFrame", transform = "Corotational02")
+    analyze(element = "ExactFrame", transform = "Linear")
 
 
 def test_corotational():
@@ -107,7 +107,9 @@ def test_cosserat():
 
     analyze(element = "CosseratFrame", transform = "Identity")
 
-    # analyze(element = "CosseratFrame", transform = "Spherical")
+    analyze(element = "CosseratFrame", transform = "Spherical")
+
+    analyze(element = "CosseratFrame", transform = "Corotational02")
 
 
 if __name__ == "__main__":
