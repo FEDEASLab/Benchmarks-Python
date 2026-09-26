@@ -1,7 +1,7 @@
 #
 # Vertical cantilever with terminal loads
 #
-# Adapted from frame-0002 to check elastic section constructors
+# Adapted from frame-0002 to check elastic AISC section constructors
 #
 import xara
 from xara.units import create_units

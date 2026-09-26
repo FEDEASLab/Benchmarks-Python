@@ -124,7 +124,7 @@ def solution(shape, shear=False):
 
 
 
-@pytest.mark.parametrize("element", ["ForceFrame"])
+@pytest.mark.parametrize("element", ["ForceFrame", "PrismFrame"]) # TODO("EulerFrame")
 @pytest.mark.parametrize("load_type", ["global", "local", "node"])
 def test_terminal_loads_euler(load_type, element):
     shape = {
@@ -141,6 +141,9 @@ def test_terminal_loads_euler(load_type, element):
                          element=element)
     Umodel = model.nodeDisp(2)
     Usoln = solution(shape)
+
+    print("    Solution: ", Usoln)
+    print("    Result:   ", Umodel)
     assert Umodel[0] == pytest.approx(Usoln[0], abs=1e-10)
     assert Umodel[1] == pytest.approx(Usoln[1], abs=1e-10)
     assert Umodel[2] == pytest.approx(Usoln[2], abs=1e-10)
@@ -150,11 +153,9 @@ def test_terminal_loads_euler(load_type, element):
     assert Umodel[5] == pytest.approx(Usoln[5], abs=1e-10)
 
 
-    print("    Solution: ", Usoln)
-    print("    Result:   ", Umodel)
 
 
-@pytest.mark.parametrize("element", ["ForceFrame", "ShearFrame"])
+@pytest.mark.parametrize("element", ["ForceFrame", "ShearFrame", "PrismFrame"])
 @pytest.mark.parametrize("load_type", ["global", "local", "node"])
 def test_terminal_loads_shear(load_type, element):
     shape = {
@@ -207,10 +208,14 @@ def test_terminal_loads_shear(load_type, element):
 
 if __name__ == "__main__":
     for load_type in ["node", "global", "local"]:
+
         print(f"\nRunning load_type={load_type}")
-        test_terminal_loads_euler(load_type, "ForceFrame")
+        for element in ["ForceFrame", "PrismFrame", "EulerFrame"]:
+            print(f"  Running element={element}")
+            test_terminal_loads_euler(load_type, element)
+
         print()
-        for element in "ForceFrame", "ShearFrame":
+        for element in "ForceFrame", "PrismFrame", "ShearFrame":
             print(f"  Running element={element}")
             test_terminal_loads_shear(load_type, element)
             print()
