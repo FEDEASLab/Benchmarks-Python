@@ -7,7 +7,7 @@ import sys
 
 import veux
 from veux.motion import Motion
-from shps.shapes import WideFlange, HollowRectangle
+from xara.shapes import WideFlange
 import opensees.openseespy as ops
 
 # External libraries

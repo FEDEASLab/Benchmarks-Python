@@ -38,7 +38,7 @@ class CooksMembrane:
 
         model = xara.Model(ndm=3, ndf=6)
 
-        material = xara.TriaxialMaterial("ElasticIsotropic", E=self.E, nu=self.nu)
+        material = xara.MultiaxialMaterial("ElasticIsotropic", E=self.E, nu=self.nu)
         model.material(material)
 
         section = xara.ShellSection("Elastic", material, self.thickness)
@@ -84,6 +84,9 @@ def run_validation(problem, elements, meshes):
     print("-" * (col_elem + col_mesh + col_disp))
 
     for element in elements:
+        if element is None:
+            print()
+            continue
         for i, mesh in enumerate(meshes):
             try:
                 value = problem.solve(element, mesh)
@@ -102,20 +105,28 @@ def run_validation(problem, elements, meshes):
 if __name__ == "__main__":
 
     elements = [
-        "ASDShellQ4",
         "ShellMITC4",
-        "ShellQ4/L01",
-        "ShellQ4/L02",
-        "ShellQ4/U",
+        "ASDShellQ4",
+        "ShellQ4/ASD",
+        "ShellQ4/T01",
         "ShellQ4/E5",
+        "ShellQ4/F",
+
+        "PlateQ4/L01",
+        "PlateQ4/L02",
+        "PlateQ4/U",
+        "PlateQ4/E5",
+    ]
+    meshes = [
+        (2, 2), 
+        # (8, 8), 
+        # (16, 16), 
+        # (32, 32)
     ]
 
     problems = [
-        (CooksMembrane(), [(2, 2), (8, 8), (16, 16), (32, 32)]),
+        (CooksMembrane(), meshes),
     ]
 
     for problem, meshes in problems:
         run_validation(problem, elements, meshes)
-    
-    import veux
-    veux.serve(veux.render(problem.model))

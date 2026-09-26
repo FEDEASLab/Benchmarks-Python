@@ -2,8 +2,8 @@ import veux
 from veux.config import LineStyle
 import numpy as np
 import xara.units.iks as units
-from xara.units.iks import foot, inch, kip, ksi
-from shps.shapes import from_aisc
+from xara.units.iks import foot, inch
+from xsection.library import from_aisc
 from veux.utility.alpha_shape import alpha_shape
 import matplotlib.pyplot as plt
 
