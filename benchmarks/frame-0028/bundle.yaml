@@ -1,0 +1,11 @@
+key: frame-0028
+title: Distributed moments
+description: ''
+thumbnail_url: frame-0028/img/isometric.png
+benchmarks: []
+scripts:
+- path: benchmarks/frame-0028/x-test-a.tcl
+  description: Distributed moment
+- path: benchmarks/frame-0028/x-test-b.tcl
+  description: Offset distributed force
+references: []
