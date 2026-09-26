@@ -1,37 +1,7 @@
 import os
-import sys
 import veux
-import pandas as pd
 from xsection.library import WideFlange
 import opensees.openseespy as ops_
-
-def render_null(model):
-    from scipy.linalg import null_space
-    model.constraints("Transformation")
-    model.analysis("Static")
-    K = model.getTangent().T
-    v = null_space(K)[:,0] #, rcond=1e-8)
-
-    def clean(number):
-        if abs(number) < 1e-18:
-            return 0.0
-        return float(number)*5000
-
-    u = {
-        tag: [clean(v[dof-1]) if dof > 0 else 0 for dof in model.nodeDOFs(tag)]
-        for tag in model.getNodeTags()
-    }
-    for node in model.getNodeTags():
-        print(node)
-        print("    ", model.nodeDOFs(node))
-    print(u)
-
-    artist = veux.create_artist(model, canvas="gltf")
-    artist.draw_outlines()
-#   artist.draw_nodes(size=1000)
-    artist.draw_outlines(state=u)
-    artist.draw_nodes(state=u, size=1000)
-    veux.serve(artist)
 
 if __name__ == "__main__":
     # Units = N,mm
@@ -94,11 +64,10 @@ if __name__ == "__main__":
 #   ops.test('NormUnbalance',1e-6,10,1)
     ops.algorithm("Newton")
 
-    ops.analysis('Static') #,'-noWarnings')
+    ops.analysis('Static')
     if ops.analyze(1) != 0:
-        print(f"Failed initial loading, time is {ops.getTime()}")
-        render_null(ops)
-        sys.exit()
+        raise RuntimeError(f"Failed initial loading, time is {ops.getTime()}")
+
     artist.draw_outlines(state=ops.nodeDisp)
 
     # Axial load
@@ -130,7 +99,6 @@ if __name__ == "__main__":
     ax.plot(u, P)
 
     plt.show()
-#   render_null(model)
 
     artist.draw_outlines(state=ops.nodeDisp)
     veux.serve(artist)
