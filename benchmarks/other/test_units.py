@@ -11,14 +11,7 @@ def check_system(u):
     check(u.pdl,   0.138254954376*u.N)
     check(u.slug, 32.17405*u.lbm)
     check(u.slug,  14.59390*u.kg)
-    check(u.lbm, 0.45359237*u.kg)  # International avoirdupois pound
-
-
-    check(u.lbf/u.slug,   u.ft / u.sec**2)
-    check(u.pdl,   0.138254954376*u.N)
-    check(u.slug, 32.17405*u.lbm)
-    check(u.slug,  14.59390*u.kg)
-    check(u.lbm, 0.45359237*u.kg)  # International avoirdupois pound
+    check(u.lbm,    0.45359237*u.kg)  # International avoirdupois pound
 
     check(u.minute,   60*u.sec)
     check(u.hr,     3600*u.sec)
