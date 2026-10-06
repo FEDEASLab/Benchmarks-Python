@@ -2356,7 +2356,7 @@ pattern Plain 1 1 {
 
 
 numberer AMD 
-system Umfpack 
+system Umfpack
 constraints Transformation 
 algorithm Newton
 test EnergyIncr 1e-18 20 0 
