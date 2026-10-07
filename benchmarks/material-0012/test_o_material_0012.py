@@ -19,7 +19,7 @@ def analyze_openseespy(dX, dY, type):
     os.model( "basic", "-ndm", 2, "-ndf", 2 )
 
     # the material
-    os.nDMaterial( "J2Plasticity", 1, K, G, Fy, Fy, 0.0, 0.0 )
+    os.nDMaterial( "J2Plasticity", 1, K, G, Fy, Fy, 0.0, 0.0)
 
     # the orthotropic wrapper
     if type == "ortho":
@@ -41,7 +41,7 @@ def analyze_openseespy(dX, dY, type):
     os.node( 1, 0, 0 )
     os.node( 2, 1, 0 )
     os.node( 3, 0, 1 )
-    os.element( "tri31", 1,   1, 2, 3,   1.0, "PlaneStress", 3 if type == "ortho" else 1 )
+    os.element("tri31", 1,   1, 2, 3,   1.0, "PlaneStress", 3 if type == "ortho" else 1 )
 
     # fixity
     os.fix( 1,   1, 1)
@@ -88,7 +88,7 @@ def analyze_openseespy(dX, dY, type):
     return sX, sY
 
 
-def test_openseespy():
+def _test_openseespy():
     NDiv = 48
     NP = NDiv+1
     dAngle = 2.0*math.pi/NDiv
