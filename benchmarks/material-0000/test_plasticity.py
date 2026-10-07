@@ -8,10 +8,11 @@ materials = [
     }
 ]
 
+
 def check_multiaxial(data):
     materials = {
         type: xara.MultiaxialMaterial(type, **data).asdict()
-        for type in ["J2BeamThread", "J2Plasticity"]
+        for type in ["J2BeamThread", "J2Plasticity", "PlasticJ2"]
     }
     for type, mdata in materials.items():
         print(mdata)
