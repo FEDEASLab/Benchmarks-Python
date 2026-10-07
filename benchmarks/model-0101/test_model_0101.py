@@ -3,7 +3,6 @@
 import xara
 import scipy.linalg
 import numpy as np
-from pandas import DataFrame as df
 
 def CreateH8(element):
     def f():
