@@ -14,6 +14,7 @@ foreach element {ForceFrame CubicFrame} {
   fix 1 1 1 1 1 1 1 
 
   material ElasticIsotropic 1 $E 0.3 
+  
   section ShearFiber 1 -GJ 0 {
     fiber  -area 0.0003702348851297048 -y 0.04316540742433476 -z -6.048548232852217 -warp {{-0.272207029929677 -6.321531721285673 0.07206856783298615} {0 0 0} {0 0 0}} -material 1 -section 1
     fiber  -area 0.0005880767643526483 -y -2.0285219731298505 -z -6.750208380523174 -warp {{12.993673665725723 -6.444751337504028 2.0288632267245306} {0 0 0} {0 0 0}} -material 1 -section 1

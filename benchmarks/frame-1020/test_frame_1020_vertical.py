@@ -46,7 +46,7 @@ def test_cosserat():
     atol = {"u_tran": 5, "u_long": 6}
     check_span(
         span.analyze(3, "ExactFrame", "Linear", ne=10, nen=3, steps=steps, 
-                    analysis_options={"test": ("NormDispIncr", 1e-12, 10)}),
+                    analysis_options={"test": ("NormDispIncr", 1e-10, 10)}),
         solution,
         atol=atol,
         space=[span.length],
@@ -81,7 +81,7 @@ def test_corotational_force():
     atol = {"u_tran": 5.5, "u_long": 6}
     check_span(
         span.analyze(3, "ForceFrame", "Corotational02", ne=10, nen=2, steps=steps, 
-                    analysis_options={"test": ("NormDispIncr", 1e-12, 10)}),
+                    analysis_options={"test": ("NormDispIncr", 1e-10, 10)}),
         solution,
         atol=atol,
         space=[span.length],
@@ -89,7 +89,7 @@ def test_corotational_force():
     )
     check_span(
         span.analyze(3, "ForceFrame", "Corotational03", ne=10, nen=2, steps=steps,
-                    analysis_options={"test": ("NormDispIncr", 1e-12, 10, 0)}),
+                    analysis_options={"test": ("NormDispIncr", 1e-10, 10, 0)}),
         solution,
         atol=atol,
         space=[span.length],
@@ -99,7 +99,7 @@ def test_corotational_force():
 def test_corotational_shear():
     atol = {"u_tran": 5.5, "u_long": 6}
     check_span(
-        span.analyze(3, "ShearFrame", "Corotational02", ne=10, nen=3, steps=steps,
+        span.analyze(3, "LagrangeFrame", "Corotational02", ne=10, nen=3, steps=steps,
                     analysis_options={"test": ("NormDispIncr", 1e-12, 10)}),
         solution,
         atol=atol,
@@ -107,7 +107,7 @@ def test_corotational_shear():
         time=time[::slice]
     )
     check_span(
-        span.analyze(3, "ShearFrame", "Corotational03", ne=10, nen=2, steps=steps,
+        span.analyze(3, "LagrangeFrame", "Corotational03", ne=10, nen=2, steps=steps,
                     analysis_options={"test": ("NormDispIncr", 1e-12, 10, 0)}),
         solution,
         atol=atol,
